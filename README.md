@@ -1,6 +1,6 @@
 # Automated IAM Provisioning Service
 
-An event-driven Identity and Access Management (IAM) orchestration API designed to automate user provisioning and deprovisioning across multiple external systems (e.g., GitHub, Slack) securely and reliably.
+Event-driven IAM orchestration API. Automates user provisioning via HMAC-secured webhooks, Redis async queues with exponential backoff, and immutable PostgreSQL audit logging. Features JWT-RBAC and DevSecOps CI/CD.
 
 ## 🏗️ Architecture
 
