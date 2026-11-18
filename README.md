@@ -1,3 +1,5 @@
+![CI/CD Pipeline](https://github.com/lesley-cyborg/Automated-IAM-Provisioning-System/actions/workflows/ci.yml/badge.svg?branch=main)
+
 # Automated IAM Provisioning Service
 
 Event-driven IAM orchestration API. Automates user provisioning via HMAC-secured webhooks, Redis async queues with exponential backoff, and immutable PostgreSQL audit logging. Features JWT-RBAC and DevSecOps CI/CD.
