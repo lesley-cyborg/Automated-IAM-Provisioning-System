@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: iam_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: iam_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      # CRITICAL: host.docker.internal tells Docker to look at your laptop's network
+      - DATABASE_URL=postgresql+asyncpg://iam_user:iam_password@host.docker.internal:5432/iam_db
+      - REDIS_URL=redis://redis:6379
+      - HR_WEBHOOK_SECRET=dev-secret-change-me
+      - JWT_SECRET=dev-jwt-secret-change-me
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build: .
+    container_name: iam_worker
+    command: arq app.worker.WorkerSettings
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://iam_user:iam_password@host.docker.internal:5432/iam_db
+      - REDIS_URL=redis://redis:6379
+      - HR_WEBHOOK_SECRET=dev-secret-change-me
+      - JWT_SECRET=dev-jwt-secret-change-me
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  redis_data:
